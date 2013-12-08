@@ -4,5 +4,9 @@
         "doctrine/orm": "2.*",
         "doctrine/annotations": "1.*",
         "jms/metadata": "1.*"
+    },
+    "target-dir": "Noback/DoctrineOrmValueObject",
+    "autoload": {
+        "psr-0" : { "Noback\\DoctrineOrmValueObject" : "" }
     }
 }
