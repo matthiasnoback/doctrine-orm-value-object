@@ -1,0 +1,8 @@
+{
+    "name": "matthiasnoback/doctrine-orm-value-object",
+    "require": {
+        "doctrine/orm": "2.*",
+        "doctrine/annotations": "1.*",
+        "jms/metadata": "1.*"
+    }
+}
