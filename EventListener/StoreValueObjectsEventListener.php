@@ -5,22 +5,22 @@ namespace Noback\DoctrineOrmValueObject\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
-use Metadata\MetadataFactory;
+use Noback\DoctrineOrmValueObject\Synchronizer\ValueObjectToEntitySynchronizer;
 
 class StoreValueObjectsEventListener implements EventSubscriber
 {
-    private $metadataFactory;
-
-    public function __construct(MetadataFactory $metadataFactory)
-    {
-        $this->metadataFactory = $metadataFactory;
-    }
+    private $synchronizer;
 
     public function getSubscribedEvents()
     {
         return array(
-            Events::preFlush,
+            Events::preFlush
         );
+    }
+
+    public function __construct(ValueObjectToEntitySynchronizer $synchronizer)
+    {
+        $this->synchronizer = $synchronizer;
     }
 
     public function preFlush(PreFlushEventArgs $event)
@@ -28,56 +28,18 @@ class StoreValueObjectsEventListener implements EventSubscriber
         $em = $event->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
-            $this->copyValuesFromValueObjects($entity);
+            $this->synchronizeValueObjects($entity);
         }
 
         foreach ($em->getUnitOfWork()->getIdentityMap() as $identities) {
             foreach ($identities as $entity) {
-                $this->copyValuesFromValueObjects($entity);
+                $this->synchronizeValueObjects($entity);
             }
         }
     }
 
-    private function copyValuesFromValueObjects($entity)
+    private function synchronizeValueObjects($entity)
     {
-        $metadata = $this->metadataFactory->getMetadataForClass(get_class($entity));
-        /* @var $metadata \Noback\DoctrineOrmValueObject\Metadata\ClassMetadata */
-
-        if (!$metadata->hasValueObjects()) {
-            return;
-        }
-
-        foreach ($metadata->propertyMetadata as $propertyMetadata) {
-            /* @var $propertyMetadata \Noback\DoctrineOrmValueObject\Metadata\PropertyMetadata */
-
-            $valueObject = $propertyMetadata->reflection->getValue($entity);
-
-            $valueObjectClass = $propertyMetadata->getValueObjectClass();
-            if (!($valueObject instanceof $valueObjectClass)) {
-                continue;
-            }
-
-            $this->copyValueObjectPropertiesToEntityFields(
-                $entity,
-                $valueObject,
-                $propertyMetadata->getFieldPrefix()
-            );
-        }
-    }
-
-    private function copyValueObjectPropertiesToEntityFields($entity, $valueObject, $fieldPrefix)
-    {
-        $entityReflectionClass = new \ReflectionClass(get_class($entity));
-        $valueObjectReflectionClass = new \ReflectionClass(get_class($valueObject));
-
-        foreach ($valueObjectReflectionClass->getProperties() as $valueObjectProperty) {
-            $valueObjectProperty->setAccessible(true);
-            $valueObjectValue = $valueObjectProperty->getValue($valueObject);
-            $entityPropertyName = $fieldPrefix . $valueObjectProperty->name;
-
-            $entityProperty = $entityReflectionClass->getProperty($entityPropertyName);
-            $entityProperty->setAccessible(true);
-            $entityProperty->setValue($entity, $valueObjectValue);
-        }
+        $this->synchronizer->synchronize($entity);
     }
 }

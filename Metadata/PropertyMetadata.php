@@ -4,7 +4,7 @@ namespace Noback\DoctrineOrmValueObject\Metadata;
 
 use Metadata\PropertyMetadata as BasePropertyMetadata;
 
-class PropertyMetadata extends BasePropertyMetadata
+class PropertyMetadata extends BasePropertyMetadata implements PropertyMetadataInterface
 {
     public $valueObjectClass;
     public $fieldPrefix;

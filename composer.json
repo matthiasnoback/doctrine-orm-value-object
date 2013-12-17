@@ -5,8 +5,14 @@
         "doctrine/annotations": "1.*",
         "jms/metadata": "1.*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "3.*",
+        "matthiasnoback/doctrine-orm-test-service-provider": "1.*"
+    },
     "target-dir": "Noback/DoctrineOrmValueObject",
     "autoload": {
-        "psr-0" : { "Noback\\DoctrineOrmValueObject" : "" }
+        "psr-0": {
+            "Noback\\DoctrineOrmValueObject": ""
+        }
     }
 }
