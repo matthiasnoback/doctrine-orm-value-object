@@ -1,5 +1,17 @@
 {
     "name": "matthiasnoback/doctrine-orm-value-object",
+    "type": "library",
+    "description": "Introduces value objects to Doctrine ORM",
+    "keywords": ["Doctrine ORM", "value object"],
+    "homepage": "http://github.com/matthiasnoback/doctrine-orm-value-object",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthias Noback",
+            "email": "matthiasnoback@gmail.com",
+            "homepage": "http://php-and-symfony.matthiasnoback.nl"
+        }
+    ],
     "require": {
         "doctrine/orm": "2.*",
         "doctrine/annotations": "1.*",
