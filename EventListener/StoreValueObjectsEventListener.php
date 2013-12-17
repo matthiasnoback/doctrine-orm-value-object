@@ -11,16 +11,16 @@ class StoreValueObjectsEventListener implements EventSubscriber
 {
     private $synchronizer;
 
+    public function __construct(ValueObjectToEntitySynchronizer $synchronizer)
+    {
+        $this->synchronizer = $synchronizer;
+    }
+
     public function getSubscribedEvents()
     {
         return array(
             Events::preFlush
         );
-    }
-
-    public function __construct(ValueObjectToEntitySynchronizer $synchronizer)
-    {
-        $this->synchronizer = $synchronizer;
     }
 
     public function preFlush(PreFlushEventArgs $event)
