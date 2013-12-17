@@ -1,5 +1,7 @@
 # Value objects for Doctrine ORM
 
+[![Build Status](https://travis-ci.org/matthiasnoback/doctrine-orm-value-object.png)](https://travis-ci.org/matthiasnoback/doctrine-orm-value-object)
+
 **WARNING: this library is not ready for production yet**
 
 This library provides the tools for working with value objects and Doctrine entities.
