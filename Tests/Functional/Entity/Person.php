@@ -3,17 +3,20 @@
 namespace Noback\DoctrineOrmValueObject\Tests\Functional\Entity;
 
 use Noback\DoctrineOrmValueObject\Annotation\ValueObject;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
 /**
- * @ORM\Entity
+ * @Entity
  */
 class Person
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @Id
+     * @Column(type="integer")
+     * @GeneratedValue(strategy="AUTO")
      */
     private $id;
 

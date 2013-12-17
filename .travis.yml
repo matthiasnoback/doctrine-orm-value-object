@@ -6,13 +6,13 @@ php:
   - 5.5
 
 env:
-  - DOCTRINE_VERSION: 2.1.*
   - DOCTRINE_VERSION: 2.2.*
   - DOCTRINE_VERSION: 2.3.*
   - DOCTRINE_VERSION: 2.4.*@dev
 
 before_script:
-  - composer require --dev doctrine/orm:${DOCTRINE_VERSION}
+  - composer require doctrine/orm:${DOCTRINE_VERSION} --no-update
+  - composer update
 
 notifications:
   email: matthiasnoback@gmail.com
