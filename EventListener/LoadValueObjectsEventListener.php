@@ -39,8 +39,10 @@ class LoadValueObjectsEventListener implements EventSubscriber
         foreach ($metadata->propertyMetadata as $propertyMetadata) {
             /* @var $propertyMetadata \Noback\DoctrineOrmValueObject\Metadata\PropertyMetadata */
 
-            $valueObjectClassReflection = new \ReflectionClass($propertyMetadata->getValueObjectClass());
-            $valueObject = $valueObjectClassReflection->newInstanceWithoutConstructor();
+            $valueObjectClass = $propertyMetadata->getValueObjectClass();
+            $valueObjectClassReflection = new \ReflectionClass($valueObjectClass);
+
+            $valueObject = $this->createValueObject($valueObjectClass);
 
             foreach ($valueObjectClassReflection->getProperties() as $valueObjectProperty) {
                 $valueObjectProperty->setAccessible(true);
@@ -55,5 +57,10 @@ class LoadValueObjectsEventListener implements EventSubscriber
 
             $propertyMetadata->setValue($entity, $valueObject);
         }
+    }
+
+    private function createValueObject($class)
+    {
+        return unserialize(sprintf('O:%d:"%s":0:{}', strlen($class), $class));
     }
 }
