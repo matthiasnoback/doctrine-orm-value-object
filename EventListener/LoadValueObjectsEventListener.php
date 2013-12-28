@@ -5,15 +5,15 @@ namespace Noback\DoctrineOrmValueObject\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Metadata\MetadataFactory;
+use Noback\DoctrineOrmValueObject\Synchronizer\EntityToValueObjectSynchronizer;
 
 class LoadValueObjectsEventListener implements EventSubscriber
 {
-    private $metadataFactory;
+    private $synchronizer;
 
-    public function __construct(MetadataFactory $metadataFactory)
+    public function __construct(EntityToValueObjectSynchronizer $synchronizer)
     {
-        $this->metadataFactory = $metadataFactory;
+        $this->synchronizer = $synchronizer;
     }
 
     public function getSubscribedEvents()
@@ -27,40 +27,6 @@ class LoadValueObjectsEventListener implements EventSubscriber
     {
         $entity = $event->getEntity();
 
-        $this->createValueObjects($entity);
-    }
-
-    private function createValueObjects($entity)
-    {
-        $metadata = $this->metadataFactory->getMetadataForClass(get_class($entity));
-
-        $entityReflectionClass = new \ReflectionClass(get_class($entity));
-
-        foreach ($metadata->propertyMetadata as $propertyMetadata) {
-            /* @var $propertyMetadata \Noback\DoctrineOrmValueObject\Metadata\PropertyMetadata */
-
-            $valueObjectClass = $propertyMetadata->getValueObjectClass();
-            $valueObjectClassReflection = new \ReflectionClass($valueObjectClass);
-
-            $valueObject = $this->createValueObject($valueObjectClass);
-
-            foreach ($valueObjectClassReflection->getProperties() as $valueObjectProperty) {
-                $valueObjectProperty->setAccessible(true);
-                $entityPropertyName = $propertyMetadata->getFieldPrefix().$valueObjectProperty->getName();
-
-                $entityProperty = $entityReflectionClass->getProperty($entityPropertyName);
-                $entityProperty->setAccessible(true);
-                $entityPropertyValue = $entityProperty->getValue($entity);
-
-                $valueObjectProperty->setValue($valueObject, $entityPropertyValue);
-            }
-
-            $propertyMetadata->setValue($entity, $valueObject);
-        }
-    }
-
-    private function createValueObject($class)
-    {
-        return unserialize(sprintf('O:%d:"%s":0:{}', strlen($class), $class));
+        $this->synchronizer->synchronize($entity);
     }
 }
